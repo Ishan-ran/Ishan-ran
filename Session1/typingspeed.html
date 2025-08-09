@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typing Speed Tester</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef2f5;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    select, button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+
+    select {
+      background: #ecf0f1;
+      color: #2c3e50;
+    }
+
+    #quoteDisplay {
+      font-size: 20px;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .incorrect {
+      color: red;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-size: 18px;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #result {
+      font-size: 18px;
+      margin-top: 20px;
+      color: #2c3e50;
+    }
+
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+
+    @media (max-width: 600px) {
+      textarea {
+        height: 80px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Typing Speed Tester</h1>
+
+    <label for="difficulty">Choose Difficulty: </label>
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+
+    <button onclick="startTest()">Start Test</button>
+
+    <p id="timer">Time Left: 60s</p>
+
+    <div id="quoteDisplay"></div>
+
+    <textarea id="inputBox" placeholder="Start typing here..." disabled></textarea>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const quotes = {
+      easy: [
+        "The sky is blue.",
+        "Practice makes perfect.",
+        "Typing is fun and easy.",
+        "Code is poetry.",
+        "Keep going, never quit."
+      ],
+      medium: [
+        "JavaScript can make your websites interactive.",
+        "Focus is the key to mastering typing speed.",
+        "Mistakes help us learn and grow stronger.",
+        "Consistency beats talent over time.",
+        "Debugging is twice as hard as writing the code in the first place."
+      ],
+      hard: [
+        "If you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+        "Simplicity carried to the extreme becomes elegance, but complexity often masks misunderstanding.",
+        "Typing speed tests are a practical way to evaluate your real-time language processing abilities.",
+        "Developers often overestimate what can be done in one year and underestimate what can be done in ten.",
+        "Premature optimization is the root of all evil."
+      ]
+    };
+
+    let timer;
+    let timeLeft = 60;
+    let quote = '';
+    let started = false;
+
+    const inputBox = document.getElementById("inputBox");
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    const result = document.getElementById("result");
+    const timerDisplay = document.getElementById("timer");
+
+    function startTest() {
+      const level = document.getElementById("difficulty").value;
+      quote = quotes[level][Math.floor(Math.random() * quotes[level].length)];
+
+      displayQuote(quote);
+      inputBox.disabled = false;
+      inputBox.value = "";
+      inputBox.focus();
+      result.innerHTML = "";
+      timeLeft = 60;
+      timerDisplay.innerText = "Time Left: 60s";
+      started = false;
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          timerDisplay.innerText = `Time Left: ${timeLeft}s`;
+        } else {
+          clearInterval(timer);
+          endTest();
+        }
+      }, 1000);
+    }
+
+    function displayQuote(quote) {
+      quoteDisplay.innerHTML = "";
+      quote.split("").forEach(char => {
+        const span = document.createElement("span");
+        span.innerText = char;
+        quoteDisplay.appendChild(span);
+      });
+    }
+
+    inputBox.addEventListener("input", () => {
+      const arrayQuote = quote.split("");
+      const arrayValue = inputBox.value.split("");
+
+      let correct = 0;
+      let total = arrayQuote.length;
+
+      quoteDisplay.childNodes.forEach((charSpan, index) => {
+        const typedChar = arrayValue[index];
+
+        if (typedChar == null) {
+          charSpan.classList.remove("correct", "incorrect");
+        } else if (typedChar === arrayQuote[index]) {
+          charSpan.classList.add("correct");
+          charSpan.classList.remove("incorrect");
+          correct++;
+        } else {
+          charSpan.classList.add("incorrect");
+          charSpan.classList.remove("correct");
+        }
+      });
+
+      if (arrayValue.join("") === quote) {
+        clearInterval(timer);
+        endTest();
+      }
+    });
+
+    function endTest() {
+      inputBox.disabled = true;
+      const timeTaken = 60 - timeLeft;
+      const wordCount = quote.trim().split(" ").length;
+      const typedText = inputBox.value.trim();
+      const typedWords = typedText.length > 0 ? typedText.split(" ").length : 0;
+
+      const speed = Math.round((typedWords / timeTaken) * 60) || 0;
+      const accuracy = calculateAccuracy(quote, typedText);
+
+      result.innerHTML = `
+        <p><strong>Time Taken:</strong> ${timeTaken}s</p>
+        <p><strong>Typing Speed:</strong> ${speed} WPM</p>
+        <p><strong>Accuracy:</strong> ${accuracy}%</p>
+      `;
+    }
+
+    function calculateAccuracy(original, typed) {
+      let correct = 0;
+      for (let i = 0; i < typed.length; i++) {
+        if (typed[i] === original[i]) correct++;
+      }
+      return Math.round((correct / original.length) * 100);
+    }
+  </script>
+</body>
+</html>
