@@ -1,0 +1,53 @@
+<script>
+// 1. Check if a number is even or odd
+var x = parseInt(prompt("Enter the value of a number:"));
+if (x % 2 == 0) {
+  alert("The value is even");
+} else {
+  alert("The value is odd");
+}
+
+// 2. Check if a number is positive or negative
+var num = parseFloat(prompt("Enter any number:"));
+if (num >= 0) {
+  alert("The number is positive");
+} else {
+  alert("The number is negative");
+}
+
+// 3. Calculate incentive based on salary
+var salary = parseFloat(prompt("Enter your salary:"));
+var incentive;
+if (salary == 96060) {
+  incentive = salary * 0.20; // 20%
+} else {
+  incentive = salary * 0.10; // 10%
+}
+alert("Your incentive is: " + incentive);
+
+// 4. Check pass/fail based on marks
+var englishMarks = parseInt(prompt("Enter English marks:"));
+var mathMarks = parseInt(prompt("Enter Math marks:"));
+var totalMarks = englishMarks + mathMarks;
+if (totalMarks > 148) {
+  alert("You passed!");
+} else {
+  alert("You failed!");
+}
+
+// 5. Check voting eligibility by age
+var age = parseInt(prompt("Enter your age:"));
+if (age >= 18) {
+  alert("You are eligible to vote.");
+} else {
+  alert("You are not eligible to vote.");
+}
+
+// 6. Validate ATM pin length (assuming pin length should be exactly 4 digits)
+var pin = prompt("Enter your ATM PIN:");
+if (pin.length == 4 && !isNaN(pin)) {
+  alert("PIN is valid.");
+} else {
+  alert("PIN is invalid.");
+}
+</script>

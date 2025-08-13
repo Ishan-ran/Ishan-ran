@@ -1,0 +1,45 @@
+<script>
+    var a = eval(prompt("Enter the value of a "));
+    var b = eval(prompt("Enter the value of b"));
+    document.write("sum = " + (a + b) + "<br>");
+    alert("sum = " + (a + b));
+
+   
+
+   
+    var r = eval(prompt("Enter the radius of the circle"));
+    var area = 3.14 * r * r;
+    document.write("Area of Circle = " + area + "<br>");
+    alert("Area of Circle = " + area);
+    var l = eval(prompt("Enter the length of the rectangle"));
+    var w = eval(prompt("Enter the width of the rectangle"));
+    var area = l * w;
+    document.write("Area of Rectangle = " + area + "<br>");
+    alert("Area of Rectangle = " + area);
+    var p = eval(prompt("Enter the principal amount"));
+    var t = eval(prompt("Enter the time in years"));
+     var r = eval(prompt("Enter the rate of interest"));
+    var si = (p * t * r) / 100;
+    document.write("Simple Interest = " + si + "<br>");
+    alert("Simple Interest = " + si);
+    var s = eval(prompt("Enter the salary"));
+    var da = s * 2 / 100;
+    var hra = (s + da) * 20 / 100;
+    var gross = s + da + hra;
+    var pf = s * 1 / 100;
+    var net = gross - pf;
+
+       document.write("DA = " + da + "<br>");
+       document.write("HRA = " + hra + "<br>");
+       document.write("Gross Salary = " + gross + "<br>");
+       document.write("PF = " + pf + "<br>");
+       document.write("Net Salary = " + net + "<br>");
+
+        alert(
+            "DA = " + da + "\n" +
+            "HRA = " + hra + "\n" +
+            "Gross Salary = " + gross + "\n" +
+            "PF = " + pf + "\n" +
+            "Net Salary = " + net
+        );
+</script>

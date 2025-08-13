@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Typing Speed Tester</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px auto;
+    max-width: 700px;
+    background: #f4f6f8;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  h1 {
+    text-align: center;
+  }
+  #paragraph {
+    background: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  #inputArea {
+    width: 100%;
+    height: 120px;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    resize: none;
+    box-sizing: border-box;
+  }
+  #stats {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  #leaderboard {
+    margin-top: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  th {
+    background: #007BFF;
+    color: white;
+  }
+  #startBtn, #nextBtn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #startBtn {
+    background-color: #28a745;
+    color: white;
+  }
+  #nextBtn {
+    background-color: #007BFF;
+    color: white;
+    display: none;
+  }
+  #nameInput {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+  }
+  #errorMsg {
+    color: red;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Typing Speed Tester</h1>
+
+<label for="nameInput">Enter Your Name:</label>
+<input type="text" id="nameInput" placeholder="Your name here..." autocomplete="off" />
+
+<div id="paragraph"></div>
+
+<textarea id="inputArea" placeholder="Start typing here..." disabled></textarea>
+
+<div id="stats">
+  <div>Time: <span id="timer">0.00</span> seconds</div>
+  <div>Errors: <span id="errors">0</span></div>
+  <div>Words per Minute: <span id="wpm">0</span></div>
+</div>
+
+<button id="startBtn">Start Test</button>
+<button id="nextBtn">Next Paragraph</button>
+
+<div id="errorMsg"></div>
+
+<div id="leaderboard">
+  <h2>Leaderboard (Fastest Times)</h2>
+  <table>
+    <thead>
+      <tr><th>Rank</th><th>Name</th><th>Time (seconds)</th><th>WPM</th><th>Errors</th></tr>
+    </thead>
+    <tbody id="leaderboardBody">
+    </tbody>
+  </table>
+</div>
+
+<script>
+(() => {
+  const paragraphs = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Typing speed tests are a fun way to improve your keyboard skills.",
+    "Practice makes perfect. Keep typing to increase your speed and accuracy.",
+    "JavaScript is a versatile language used both on the client and server side.",
+    "Consistent practice and focus are key to mastering any new skill."
+  ];
+
+  let currentIndex = 0;
+  let startTime = null;
+  let timerInterval = null;
+  let errorsCount = 0;
+  let userName = '';
+  let finished = false;
+
+  const paragraphDiv = document.getElementById("paragraph");
+  const inputArea = document.getElementById("inputArea");
+  const timerSpan = document.getElementById("timer");
+  const errorsSpan = document.getElementById("errors");
+  const wpmSpan = document.getElementById("wpm");
+  const startBtn = document.getElementById("startBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const nameInput = document.getElementById("nameInput");
+  const errorMsg = document.getElementById("errorMsg");
+  const leaderboardBody = document.getElementById("leaderboardBody");
+
+  // Store results in localStorage for leaderboard
+  function saveResult(name, time, wpm, errors) {
+    let scores = JSON.parse(localStorage.getItem('typingScores') || '[]');
+    scores.push({name, time, wpm, errors});
+    scores.sort((a,b) => a.time - b.time);
+    localStorage.setItem('typingScores', JSON.stringify(scores.slice(0,10))); // keep top 10
+  }
+
+  function loadLeaderboard() {
+    leaderboardBody.innerHTML = '';
+    let scores = JSON.parse(localStorage.getItem('typingScores') || '[]');
+    if(scores.length === 0) {
+      leaderboardBody.innerHTML = `<tr><td colspan="5">No scores yet.</td></tr>`;
+      return;
+    }
+    scores.forEach((s,i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td>${s.name}</td><td>${s.time.toFixed(2)}</td><td>${s.wpm}</td><td>${s.errors}</td>`;
+      leaderboardBody.appendChild(tr);
+    });
+  }
+
+  function startTimer() {
+    startTime = Date.now();
+    timerSpan.textContent = "0.00";
+    timerInterval = setInterval(() => {
+      const elapsed = (Date.now() - startTime)/1000;
+      timerSpan.textContent = elapsed.toFixed(2);
+    }, 100);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+  }
+
+  function calculateWPM(text, timeInSeconds) {
+    // Words per minute = (words / time in minutes)
+    let wordsTyped = text.trim().split(/\s+/).length;
+    let minutes = timeInSeconds / 60;
+    if(minutes === 0) return 0;
+    return Math.round(wordsTyped / minutes);
+  }
+
+  function resetTest() {
+    inputArea.value = '';
+    errorsCount = 0;
+    errorsSpan.textContent = errorsCount;
+    wpmSpan.textContent = 0;
+    timerSpan.textContent = "0.00";
+    startTime = null;
+    finished = false;
+    stopTimer();
+    inputArea.disabled = true;
+    nextBtn.style.display = 'none';
+  }
+
+  function setParagraph(index) {
+    paragraphDiv.textContent = paragraphs[index];
+  }
+
+  // Check errors as user types
+  function checkErrors() {
+    const userInput = inputArea.value;
+    const targetText = paragraphs[currentIndex];
+
+    let errorCount = 0;
+    for(let i = 0; i < userInput.length; i++) {
+      if(userInput[i] !== targetText[i]) errorCount++;
+    }
+    errorsCount = errorCount;
+    errorsSpan.textContent = errorsCount;
+  }
+
+  // Check if typing completed correctly
+  function isComplete() {
+    return inputArea.value === paragraphs[currentIndex];
+  }
+
+  // On input event
+  inputArea.addEventListener('input', () => {
+    if(finished) return;
+
+    // On first key press, start timer
+    if(startTime === null && inputArea.value.length > 0) {
+      startTimer();
+    }
+
+    checkErrors();
+
+    if(isComplete()) {
+      finished = true;
+      stopTimer();
+      const elapsed = (Date.now() - startTime)/1000;
+      const wpm = calculateWPM(paragraphs[currentIndex], elapsed);
+      wpmSpan.textContent = wpm;
+      errorMsg.textContent = '';
+      nextBtn.style.display = 'inline-block';
+      inputArea.disabled = true;
+
+      // Save result
+      saveResult(userName, elapsed, wpm, errorsCount);
+      loadLeaderboard();
+    }
+  });
+
+  startBtn.addEventListener('click', () => {
+    userName = nameInput.value.trim();
+    if(userName.length < 1) {
+      errorMsg.textContent = "Please enter your name before starting.";
+      return;
+    }
+    errorMsg.textContent = '';
+    resetTest();
+    setParagraph(currentIndex);
+    inputArea.disabled = false;
+    inputArea.focus();
+    startBtn.disabled = true;
+    nameInput.disabled = true;
+  });
+
+  nextBtn.addEventListener('click', () => {
+    currentIndex++;
+    if(currentIndex >= paragraphs.length) {
+      currentIndex = 0;
+      alert("You have completed all paragraphs!");
+    }
+    resetTest();
+    setParagraph(currentIndex);
+    inputArea.disabled = false;
+    inputArea.focus();
+    nextBtn.style.display = 'none';
+  });
+
+  // Initialize
+  setParagraph(currentIndex);
+  loadLeaderboard();
+
+})();
+</script>
+
+</body>
+</html>
