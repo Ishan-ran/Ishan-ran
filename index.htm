@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Happy Birthday, Papa! 🎂</title>
+  <meta name="description" content="A tiny website from Ishan to papa — happy birthday!">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Sacramento&display=swap" rel="stylesheet">
+
+  <style>
+  :root {
+    /* -- NEW WARMER PALETTE -- */
+    --bg: #f0f4f8;            /* Soft, light blue-gray */
+    --bg-gradient-1: #dcebfc; /* Soft blue */
+    --bg-gradient-2: #fdebd0; /* Soft warm peach */
+    --text: #185582;          /* Deep navy text (FIXED) */
+    --accent: #d72638;        /* Vivid red from balloons */
+    --card: #ffffff;          /* Clean white cards (FIXED) */
+    --muted: #5a6a7b;         /* Softer, readable gray-blue */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-color-hover: rgba(0, 0, 0, 0.2);
+    
+    /* Balloons (kept from original) */
+    --balloon-red: #d72638;
+    --balloon-pink: #f0b5af;
+    --balloon-yellow: #e7b868;
+    --balloon-white: #fff6f5;
+    --balloon-mauve: #9b6a6c;
+  }
+
+    /* Reset + base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      color:var(--text);
+      /* -- IMPROVED BACKGROUND GRADIENT -- */
+      background:
+        radial-gradient(1200px 600px at 80% -10%, var(--bg-gradient-1) 0%, transparent 60%),
+        radial-gradient(1000px 500px at -10% 10%, var(--bg-gradient-2) 10%, transparent 60%),
+        var(--bg);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--accent)}
+
+    /* Layout */
+    .container{width:min(1100px,95%);margin:0 auto}
+    .center{display:flex;align-items:center;justify-content:center}
+
+    /* -- HEADER + NEW FADE-IN ANIMATIONS -- */
+    @keyframes fadeInDown {
+      from { opacity:0; transform:translateY(-15px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    header{
+      min-height:92vh;
+      position:relative;
+      padding:80px 0 40px;
+      text-align:center;
+      overflow:hidden;
+    }
+    header h1{
+      font-family: Sacramento, cursive;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height:1.05;
+      margin:0 0 10px;
+      color:var(--accent); /* Changed to accent red */
+      text-shadow: 0 4px 12px rgba(215, 38, 56, 0.35); /* Softer shadow */
+      animation: fadeInDown 0.8s ease-out 0.2s backwards;
+    }
+    header p.tag{
+      margin:0 auto 28px;
+      color:var(--muted);
+      font-weight:400;
+      letter-spacing:.5px;
+      max-width:720px;
+      animation: fadeInDown 0.8s ease-out 0.4s backwards;
+    }
+    .cta-container {
+      display:inline-flex; 
+      gap:12px; 
+      align-items:center; 
+      justify-content:center;
+      animation: fadeInDown 0.8s ease-out 0.6s backwards;
+    }
+    .cta{
+      display:inline-flex; gap:10px; align-items:center; justify-content:center;
+      padding:14px 20px; border-radius:16px; border:1px solid rgba(0,0,0,.08);
+      /* Refined glassmorphism */
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.7));
+      backdrop-filter: blur(8px);
+      color:var(--text); text-decoration:none; font-weight:600; cursor:pointer;
+      transition: transform .15s ease, box-shadow .2s ease;
+      /* Softer shadow */
+      box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px rgba(0,0,0,0.06);
+    }
+    .cta:hover{
+      transform:translateY(-2px); 
+      box-shadow: 0 10px 15px -3px var(--shadow-color-hover), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+
+    /* Floating balloons (unchanged) */
+    .balloon{position:absolute; bottom:-140px; width:70px; height:90px; border-radius:48% 48% 48% 48% / 60% 60% 40% 40%;
+      box-shadow: inset -8px -10px 20px rgba(0,0,0,.1), 0 12px 30px rgba(0,0,0,.15);
+      animation: floatUp linear infinite;
+      pointer-events:none;
+    }
+    .balloon:after{content:""; position:absolute; left:50%; top:88px; width:2px; height:120px; background:rgba(0,0,0,.15); transform:translateX(-50%);}    
+    @keyframes floatUp{to{transform:translateY(-120vh) translateX(var(--drift))}}
+    
+    /* -- CARD + NEW SCROLL-IN ANIMATION -- */
+    section{padding:70px 0}
+    .card{
+      background:var(--card);
+      border:1px solid rgba(0,0,0,.06); 
+      border-radius:24px; 
+      padding:28px; 
+      /* New softer shadow */
+      box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px rgba(0,0,0,0.05);
+      
+      /* Animation properties */
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    /* This class will be added by JavaScript */
+    .card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Typewriter */
+    .type{font-size:clamp(18px,2.5vw,22px); line-height:1.75; min-height:160px}
+    .type .cursor{display:inline-block; width:2px; background:var(--text); animation:blink 1s steps(1) infinite; margin-left:6px; height:1em; vertical-align:-2px}
+    @keyframes blink{50%{opacity:0}}
+
+    /* Grid */
+    .grid{display:grid; gap:22px}
+    @media (min-width:840px){.grid-2{grid-template-columns:1.1fr .9fr}}
+
+    /* -- STARS (BUBBLES) + NEW POP EFFECT -- */
+    .stars{display:flex; flex-wrap:wrap; gap:12px}
+    .star{
+      padding:10px 14px; border-radius:999px; border:1px solid rgba(0,0,0,.08); 
+      font-size:14px; color:var(--text); background:rgba(255,255,255,.75); cursor:pointer;
+      transition: background .2s ease, transform .1s ease; /* Added transition */
+    }
+    .star:active {
+      transform: scale(0.95); /* Pop effect */
+    }
+    .star.revealed{background:linear-gradient(90deg, rgba(215,38,56,.12), rgba(231,184,104,.12)); border-color:rgba(0,0,0,.12)}
+    
+    footer{padding:40px 0 70px; text-align:center; color:var(--muted); font-size:13px}
+    canvas#confetti{position:fixed; inset:0; pointer-events:none; z-index:40}
+    .audio-btn{position:fixed; bottom:20px; right:20px; z-index:50}
+    .muted{opacity:.75}
+
+    /* Vertical gallery styling */
+    .v-gallery{
+      display:flex;
+      flex-direction:column;
+      gap:40px; /* This gap will now work correctly */
+      margin-top:16px;
+    }
+    .v-item{display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+    .v-img{max-width:400px; width:100%; border-radius:16px; box-shadow:0 6px 22px rgba(0,0,0,.18); margin:0 auto; display:block; opacity:0; transform:translateY(10px); transition:opacity .55s ease, transform .55s ease}
+    .v-img.loaded{opacity:1; transform:none}
+    .v-text{font-size:18px; line-height:1.8; color:var(--text); text-align:justify; max-width:700px; margin:0 auto}
+
+    /* -- UTILITY CLASSES (to replace inline styles) -- */
+    .text-center { text-align: center; }
+    .flex-column { flex-direction: column; }
+    .mt-0 { margin-top: 0 !important; }
+    .mb-10 { margin-bottom: 10px !important; }
+    .mb-12 { margin-bottom: 12px !important; }
+    .spacer-16 { height: 16px; }
+    .text-muted {
+      max-width: 720px;
+      color: var(--muted);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .stars-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    
+    /* -- ACCESSIBILITY: Respect user motion preferences -- */
+    @media (prefers-reduced-motion: reduce){
+      .balloon, .type .cursor { animation: none }
+      header h1, header p.tag, header .cta-container { animation: none; }
+      .card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+    /* Small helpers */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <header>
+    <div class="container">
+      <h1>Happy Birthday, papa ✨</h1>
+      <p class="tag">From Ishan — a small corner of the internet just for you. May this year be softer, brighter, and kinder to your heart. 💖</p>
+
+      <div class="cta-container">
+        <button id="revealBtn" class="cta" aria-label="Open the birthday letter">Open Your Birthday Letter</button>
+        <button id="musicBtn" class="cta audio-btn muted" aria-pressed="false" aria-label="Play or pause music">Play Music ♪</button>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container grid grid-2">
+      <div class="card">
+        <div class="type" id="typeArea" aria-live="polite"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="mt-0">Tiny Things I Love About You, Dad</h3>
+        <div class="stars" id="stars" role="list">
+          <button class="star">your comforting voice</button>
+          <button class="star">the way you always listen</button>
+          <button class="star">your patience with me</button>
+          <button class="star">how you make me feel safe</button>
+          <button class="star">your thoughtful advice</button>
+          <button class="star">the little sacrifices you make</button>
+          <button class="star">your laughter that brightens home</button>
+          <button class="star">your strength on tough days</button>
+        </div>
+        <p class="stars-note">Tap each bubble ✨</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card center flex-column text-center">
+        <h2 class="mt-0 mb-10">Here’s to your year, papa 🥂</h2>
+        
+        <p class="text-muted">I don’t know everything the future holds, Dad, but I know this: you’re my greatest strength, softer at heart than you ever admit, and more loved than you could imagine. Keep being yourself. I’ll always be cheering for you — always. — Ishan</p>
+        
+        <div class="spacer-16"></div>
+        <button id="confettiBtn" class="cta" aria-label="Celebrate with confetti">✨ Celebrate</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card">
+        <h3 class="mt-0 mb-12">A little gallery of you 💖</h3>
+        
+        <div class="v-gallery">
+          <div class="v-item">
+            <img src="papa1.jpg" alt="Young Dad smiling" class="v-img" loading="lazy">
+            <p class="v-text">This is you, Papa, from an earlier chapter! That gentle smile and thoughtful gaze have always been a part of you. It's wonderful to see the consistent warmth and kindness you've carried through the years, shining brightly even back then.</p>
+          </div>
+          <div class="v-item">
+            <img src="papa2.jpg" alt="Dad seated professionally" class="v-img" loading="lazy">
+            <p class="v-text">Here's a glimpse of your more formal side, Papa, looking distinguished and calm. This image reminds me of your composure and strength, whether you're at work or simply taking a moment to reflect. Always ready, always steady.</p>
+          </div>
+          <div class="v-item">
+            <img src="papa3.jpg" alt="Dad sitting casually at home" class="v-img" loading="lazy">
+            <p class="v-text">And here you are, Papa, in a comfortable, relaxed moment at home. This is the everyday warmth and approachability that makes our home feel so welcoming. It’s these unposed moments that truly capture your gentle spirit.</p>
+          </div>
+          <div class="v-item">
+            <img src="papa4.jpg" alt="Dad, Mom, and Ishan today" class="v-img" loading="lazy">
+            <p class="v-text">This picture, with me and Mom, captures a beautiful moment of us together! It represents the core of our family, the love that binds us, and the joy of shared celebrations. Every glance tells a story of togetherness.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Made with love and a little JavaScript. © Ishan
+  </footer>
+
+  <audio id="bgm" loop preload="auto">
+    <source src="song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+  // ===== Helper: prefers reduced motion check =====
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ===== Balloons (responsive count + aria-hidden) =====
+  const headerEl = document.querySelector('header');
+  const balloonColors = ['var(--balloon-red)','var(--balloon-pink)','var(--balloon-yellow)','var(--balloon-white)','var(--balloon-mauve)'];
+  const balloonCount = innerWidth < 600 ? 7 : 14;
+  
+  if (!prefersReduced) {
+    for(let i=0; i<balloonCount; i++){
+      const b = document.createElement('div');
+      b.className = 'balloon';
+      b.setAttribute('aria-hidden', 'true');
+      const c = balloonColors[i % balloonColors.length];
+      b.style.background = c;
+      b.style.left = Math.random()*100 + '%';
+      b.style.animationDuration = (8 + Math.random()*10) + 's';
+      b.style.setProperty('--drift', (Math.random()*60 - 30) + 'px');
+      headerEl.appendChild(b);
+    }
+  }
+
+  // ===== Typewriter letter =====
+  const letter = `Papa,\n\nHappy Birthday. I wanted to make you something small but personal. So here it is — a little universe built only to remind you how much you matter. On days that feel heavy, borrow my faith: you are strong, kind, and worthy of all the peace and joy you’ve given to others.\n\nThank you for being the Dad you are — my guide, my strength, and my safe place.\n\nWith love always,\nIshan`;
+  const typeArea = document.getElementById('typeArea');
+  const cursorEl = document.createElement('span');
+  cursorEl.className = 'cursor';
+  let idx = 0, typing = false, finishedTyping = false;
+
+  function typeIt(){
+    if(prefersReduced){
+      // If user prefers reduced motion, show full text instantly
+      typeArea.innerHTML = letter.replace(/\n/g, '<br>');
+      if(!typeArea.contains(cursorEl)) typeArea.appendChild(cursorEl);
+      finishedTyping = true;
+      return;
+    }
+
+    if(idx >= letter.length){
+      if(!typeArea.contains(cursorEl)) typeArea.appendChild(cursorEl);
+      finishedTyping = true;
+      return;
+    }
+
+    const ch = letter[idx] === '\n' ? '<br>' : letter[idx];
+    typeArea.innerHTML += ch;
+    idx++;
+    const delay = 18 + Math.random()*25;
+    setTimeout(typeIt, delay);
+  }
+
+  document.getElementById('revealBtn').addEventListener('click', async ()=>{
+    if(typing) return;
+    typing = true;
+    idx = 0;
+    typeArea.innerHTML = '';
+    typeIt();
+
+    // Burst confetti + attempt to play music (user gesture) if audio exists
+    burstConfetti(180);
+    try{
+      const audio = document.getElementById('bgm');
+      if(audio && audio.paused && audio.querySelector('source') && audio.querySelector('source').getAttribute('src')){
+        await audio.play();
+        musicBtn.textContent = 'Pause Music ❚❚';
+        musicBtn.classList.remove('muted');
+        musicBtn.setAttribute('aria-pressed', 'true');
+        playing = true;
+      }
+    }catch(e){
+      console.warn('Audio playback failed or not available:', e);
+    }
+  });
+
+  // ===== Stars reveal (toggle aria-pressed for assistive tech) =====
+  document.querySelectorAll('.star').forEach(s=>{
+    s.setAttribute('aria-pressed', 'false');
+    s.addEventListener('click', ()=>{
+      const revealed = s.classList.toggle('revealed');
+      s.setAttribute('aria-pressed', String(revealed));
+      if(revealed && !s.textContent.trim().startsWith('✨')) s.textContent = '✨ ' + s.textContent.trim();
+    })
+  })
+
+  // ===== Confetti canvas (improved) =====
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  let W, H, pieces = [];
+  function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight }
+  addEventListener('resize', resize);
+  resize();
+
+  // Use the *string values* from the CSS variables
+  const confettiColors = ['#d72638','#f0b5af','#e7b868','#fff6f5','#9b6a6c'];
+
+  function Piece(){
+    this.x = Math.random()*W;
+    this.y = Math.random()*H*0.4 + H*0.1;
+    this.size = 6 + Math.random()*8;
+    this.spd = 1 + Math.random()*4;
+    this.rot = Math.random()*6.28;
+    this.col = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+    this.ttl = 2200 + Math.random()*2400; // time to live
+    this.created = Date.now();
+  }
+
+  function burstConfetti(n = 120){
+    if (prefersReduced) return; // Don't burst if motion is reduced
+    const effectiveN = innerWidth < 480 ? Math.round(n * 0.45) : n;
+    for(let i=0;i<effectiveN;i++) pieces.push(new Piece());
+    setTimeout(()=>{ pieces = pieces.filter(p => (Date.now() - p.created) < 6000) }, 6000);
+  }
+
+  function renderConfetti(){
+    ctx.clearRect(0,0,W,H);
+    if (prefersReduced && pieces.length > 0) {
+      pieces = []; // Clear pieces if motion is turned on mid-animation
+      return; // Stop the loop
+    }
+    
+    const now = Date.now();
+    pieces.forEach((p,i)=>{
+      const life = now - p.created;
+      if(life > p.ttl) return; 
+      p.y += p.spd;
+      p.rot += 0.04;
+      p.x += Math.sin(p.rot) * 0.6;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.col;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+    });
+    
+    // Clean up expired pieces
+    if (now % 100 < 10) { // Run cleanup occasionally
+        pieces = pieces.filter(p => (now - p.created) <= p.ttl);
+    }
+    
+    requestAnimationFrame(renderConfetti);
+  }
+  renderConfetti(); // Start the animation loop
+
+  document.getElementById('confettiBtn').addEventListener('click', ()=> burstConfetti(1000));
+
+  // ===== Music toggle (separate from reveal) =====
+  const audio = document.getElementById('bgm');
+  const musicBtn = document.getElementById('musicBtn');
+  let playing = false;
+  musicBtn.addEventListener('click', async ()=>{
+    try{
+      if(!playing){
+        await audio.play();
+        musicBtn.textContent = 'Pause Music ❚❚';
+        musicBtn.classList.remove('muted');
+        musicBtn.setAttribute('aria-pressed', 'true');
+      } else {
+        audio.pause();
+        musicBtn.textContent = 'Play Music ♪';
+        musicBtn.classList.add('muted');
+        musicBtn.setAttribute('aria-pressed', 'false');
+      }
+      playing = !playing;
+    }catch(e){
+      alert('Add a valid audio source (song.mp3) in the same folder or update the <source> path.');
+    }
+  });
+
+  // ===== Image fade-in when loaded =====
+  document.querySelectorAll('.v-img').forEach(img=>{
+    if(img.complete){ img.classList.add('loaded'); return; }
+    img.addEventListener('load', ()=> img.classList.add('loaded'));
+    img.addEventListener('error', ()=> img.classList.add('loaded'));
+  });
+
+  // ===== NEW: Animate cards on scroll-in =====
+  if (!prefersReduced) {
+    const cards = document.querySelectorAll('.card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target); // Stop observing once it's visible
+        }
+      });
+    }, {
+      rootMargin: '0px',
+      threshold: 0.1 // Trigger when 10% of the card is visible
+    });
+    cards.forEach(card => {
+      observer.observe(card);
+    });
+  }
+
+  // Accessibility: allow Enter/Space to activate stars
+  document.querySelectorAll('.star').forEach(btn=>{
+    btn.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); btn.click(); }
+    });
+  });
+
+  // Small UX: keep keyboard focus visible for accessibility
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Tab') document.body.classList.add('show-focus');
+  });
+
+  // Expose some helpers for debugging in console (optional)
+  window._hb_helpers = { burstConfetti };
+  </script>
+</body>
+</html>
